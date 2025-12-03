@@ -1,0 +1,219 @@
+/* ---- local tokens ---- */
+/* ---- Hero section ---- */
+.hero {
+  /* pick colors from global theme instead of hard-coded */
+  --ink: var(--text-main, #eef3f7);    /* main text color */
+  --muted: var(--text-muted, #9fb0be); /* softer text */
+  --brand: var(--accent, #ff6a3d);     /* orange accent from theme */
+  --ring: #ff8a50;                     /* you can keep this fixed or derive later */
+  --max: 1200px;
+  --nav-h: var(--nav-h, 64px);
+
+  color: var(--ink);
+
+  /* 🔄 background follows theme now, with safe fallbacks */
+  background: var(--bg-main);
+
+  inline-size: 100%;
+  min-block-size: calc(100svh - var(--nav-h));
+  display: grid;
+  grid-template-rows: 1fr auto; /* main + skills row */
+  overflow: hidden;
+}
+
+
+/* ===== Layout ===== */
+.hero__container {
+  width: min(var(--max), 100%);
+  margin-inline: auto;
+  padding: clamp(24px, 6vh, 72px) clamp(16px, 6vw, 64px);
+  display: grid;
+  gap: clamp(20px, 4vw, 48px);
+  align-items: center;
+  grid-template-columns: 1fr;        /* mobile-first */
+}
+@media (min-width: 960px) {
+  .hero__container { grid-template-columns: 1.1fr 0.9fr; }
+}
+
+/* ===== Text block ===== */
+.hero__copy {
+  max-inline-size: 640px;
+}
+
+.hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+.hero__dot {
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+.hero__hello {
+  font-size: clamp(26px, 5vw, 36px);
+  font-weight: 800;
+  letter-spacing: .4px;
+  color: var(--brand);
+}
+
+/* Horizontal: "I'm Gaurav | Web Developer" */
+.hero__titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0 20px;
+  line-height: 1.1;
+}
+
+/* 👇 use theme text color instead of #fff */
+.hero__intro {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: clamp(22px, 4.8vw, 40px);
+  font-weight: 700;
+  color: var(--ink);    /* was #fff */
+}
+
+.hero__border {
+  inline-size: 4px;
+  block-size: 1.35em;
+  background: var(--brand);
+  border-radius: 2px;
+}
+
+/* highlighted name stays orange */
+.hero__name {
+  color: var(--brand);
+  font-weight: 800;
+}
+
+/* 👇 THIS is the “I'm Web Developer” line – now theme-aware */
+.hero__role {
+  margin: 0;
+  font-size: clamp(22px, 4.8vw, 40px);
+  font-weight: 800;
+  color: var(--ink);    /* was #fff -> now white in dark, black in light */
+}
+
+/* Buttons */
+.hero__cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn {
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 12px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  transition:
+    transform .12s ease,
+    box-shadow .2s ease,
+    border-color .2s ease,
+    background .2s ease;
+}
+.btn--primary {
+  background: var(--brand);
+  color: #1b0f0a;
+  box-shadow: 0 10px 24px rgba(255,106,61,.22);
+}
+.btn--primary:hover { transform: translateY(-1px); }
+
+/* ghost button now uses ink/muted so it also adapts in light mode */
+.btn--ghost {
+  color: var(--ink);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--ink) 22%, transparent);
+}
+.btn--ghost:hover {
+  border-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  transform: translateY(-1px);
+}
+
+/* ===== Visual (photo + ORANGE RING) ===== */
+.hero__visual { display: grid; place-items: center; }
+
+/* Make the ring very visible + responsive.
+   clamp(minSize, preferred, maxSize) keeps it perfect at all breakpoints. */
+.hero__ring {
+  position: relative;
+  inline-size: clamp(220px, 42vw, 420px);
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  /* inner glow */
+  background:
+    radial-gradient(closest-side, rgba(255,138,80,.38), transparent 64%),
+    radial-gradient(closest-side, rgba(255,106,61,.18), transparent 72%),
+    radial-gradient(closest-side, rgba(255,106,61,.10), transparent 78%);
+  filter: drop-shadow(0 24px 48px rgba(255,106,61,.18));
+}
+
+/* crisp orange ring outline */
+.hero__ring::before {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border-radius: 50%;
+  border: 3px solid rgba(255,138,80,.55);
+  box-shadow:
+    0 0 28px rgba(255,138,80,.25),
+    inset 0 0 12px rgba(255,106,61,.15);
+  pointer-events: none;
+}
+
+/* Photo size: smaller on mobile, balanced on desktop */
+.hero__img {
+  max-inline-size: clamp(62%, 68%, 78%);
+  display: block;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
+}
+
+/* ===== Skills row ===== */
+.hero__skillsWrap {
+  border-top: 1px solid rgba(255,255,255,.06);
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.02));
+}
+.hero__skills {
+  list-style: none;
+  margin: 0;
+  padding: 10px 20px 18px;
+  width: min(var(--max), 100%);
+  margin-inline: auto;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.hero__skills li {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255, 171, 125, 0.092);
+  color: var(--muted);   /* was fixed #a9b4bf */
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+/* ===== Safety: never exceed viewport width ===== */
+.hero,
+.hero__container,
+.hero__skillsWrap,
+.hero__skills {
+  inline-size: 100%;
+  max-inline-size: 100%;
+}

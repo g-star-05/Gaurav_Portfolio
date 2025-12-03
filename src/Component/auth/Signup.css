@@ -1,0 +1,142 @@
+/* === SIGNUP PAGE (DAY/NIGHT THEME READY) === */
+.signup-page {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, var(--bg-card), var(--bg-main));
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Card */
+.signup-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(12px);
+  text-align: center;
+  color: var(--text-main);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Title */
+.signup-card h1 {
+  color: var(--text-main);
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+}
+
+/* Form layout */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Input fields */
+.signup-form input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.signup-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent), transparent 40%);
+}
+
+/* Password field */
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 40px; /* space for the eye icon */
+}
+
+/* 👁️ Toggle button */
+.view-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.view-toggle:hover {
+  color: var(--accent);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.view-toggle:focus {
+  outline: none;
+}
+
+/* Error message */
+.signup-error {
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-top: -6px;
+}
+
+/* Submit button */
+.signup-submit {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), #f97316);
+  color: #111827;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.signup-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(251, 146, 60, 0.6);
+}
+
+/* Footer */
+.signup-footer {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.signup-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.signup-footer a:hover {
+  color: color-mix(in srgb, var(--accent), white 25%);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  .signup-card {
+    padding: 24px;
+    border-radius: 14px;
+  }
+  .signup-card h1 {
+    font-size: 1.4rem;
+  }
+}
