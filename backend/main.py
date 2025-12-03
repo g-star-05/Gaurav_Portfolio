@@ -30,20 +30,19 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 app = FastAPI(title="Portfolio Auth Backend")
 
+# ✅ ONLY ONE allow_origins, and correct Vercel URL (no trailing slash)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",     # ✅ your current Vite port
         "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174",
-        "http://127.0.0.1:5175",
-        "https://gaurav-portfolio-mocha-eta.vercel.app/",
+        "https://gaurav-portfolio-mocha-eta.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    # If you ever want to debug quickly, temporarily use:
+    # allow_origins=["*"],
 )
 
 # ---------------- DB MODEL ----------------
@@ -147,7 +146,6 @@ def read_root():
     return {"message": "Python backend with auth is running 👋"}
 
 
-# simple contact endpoint (optional)
 @app.post("/contact")
 def contact(data: dict):
     name = data.get("name")
@@ -157,7 +155,6 @@ def contact(data: dict):
     return {"success": True, "msg": "Message received!"}
 
 
-# SIGNUP
 @app.post("/auth/register", response_model=UserOut, status_code=201)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
     existing = get_user_by_email(db, email=user_in.email)
@@ -178,7 +175,6 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     return user
 
 
-# LOGIN – expects JSON { email, password }
 @app.post("/auth/login", response_model=Token)
 def login(user_in: UserLogin, db: Session = Depends(get_db)):
     user = get_user_by_email(db, email=user_in.email)
@@ -193,7 +189,6 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
     return {"access_token": token, "token_type": "bearer"}
 
 
-# CURRENT USER (protected)
 @app.get("/auth/me", response_model=UserOut)
 async def read_me(current_user: User = Depends(get_current_user)):
     return current_user
