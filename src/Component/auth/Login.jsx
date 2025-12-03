@@ -1,3 +1,6 @@
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
@@ -17,11 +20,11 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(`${API_BASE}/auth/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(formData),
+});
 
       if (!res.ok) {
         setError("Invalid email or password.");

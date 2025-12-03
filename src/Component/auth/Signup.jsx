@@ -1,3 +1,7 @@
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Signup.css";
@@ -30,35 +34,29 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    // Final name validation before submit
-    if (!/^[A-Za-z\s]+$/.test(formData.name)) {
-      setError("Full name should contain only letters and spaces.");
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) {
+      setError("Signup failed! Try again.");
       return;
     }
 
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        setError("Signup failed! Try again.");
-        return;
-      }
-
-      const data = await res.json();
-      alert("Signup successful!");
-      navigate("/login");
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong.");
-    }
-  };
+    const data = await res.json();
+    alert("Signup successful!");
+    navigate("/login");
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong.");
+  }
+};
 
   return (
     <main className="signup-page">
