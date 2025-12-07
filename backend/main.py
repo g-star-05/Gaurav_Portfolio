@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
+import logging
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
@@ -26,23 +27,28 @@ Base = declarative_base()
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+logger = logging.getLogger("uvicorn.error")
+
 # ---------------- APP + CORS ----------------
 
 app = FastAPI(title="Portfolio Auth Backend")
 
-# ✅ ONLY ONE allow_origins, and correct Vercel URL (no trailing slash)
+# ⚠️ USE YOUR CURRENT VERCEL URL HERE (NO TRAILING SLASH)
+FRONTEND_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    # new Vercel deployment
+    "https://gaurav-portfolio-git-main-gaurav-tares-projects.vercel.app",
+    # if you still use the old one, keep it too:
+    # "https://gaurav-portfolio-mocha-eta.vercel.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://gaurav-portfolio-mocha-eta.vercel.app",
-    ],
+    allow_origins=FRONTEND_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    # If you ever want to debug quickly, temporarily use:
-    # allow_origins=["*"],
 )
 
 # ---------------- DB MODEL ----------------
@@ -151,42 +157,62 @@ def contact(data: dict):
     name = data.get("name")
     email = data.get("email")
     message = data.get("message")
-    print(f"📩 New message from {name} ({email}): {message}")
+    logger.info(f"📩 New message from {name} ({email}): {message}")
     return {"success": True, "msg": "Message received!"}
 
 
 @app.post("/auth/register", response_model=UserOut, status_code=201)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
-    existing = get_user_by_email(db, email=user_in.email)
-    if existing:
-        raise HTTPException(
-            status_code=400,
-            detail="User with this email already exists",
-        )
+    try:
+        existing = get_user_by_email(db, email=user_in.email)
+        if existing:
+            raise HTTPException(
+                status_code=400,
+                detail="User with this email already exists",
+            )
 
-    user = User(
-        name=user_in.name,
-        email=user_in.email,
-        hashed_password=get_password_hash(user_in.password),
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
+        user = User(
+            name=user_in.name,
+            email=user_in.email,
+            hashed_password=get_password_hash(user_in.password),
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
+    except HTTPException:
+        # pass through “user already exists” etc
+        raise
+    except Exception as e:
+        # 👇 This is where you'll see INTERNAL errors in Render logs
+        logger.exception("Error in /auth/register: %s", e)
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while registering user.",
+        )
 
 
 @app.post("/auth/login", response_model=Token)
 def login(user_in: UserLogin, db: Session = Depends(get_db)):
-    user = get_user_by_email(db, email=user_in.email)
-    if not user or not verify_password(user_in.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    try:
+        user = get_user_by_email(db, email=user_in.email)
+        if not user or not verify_password(user_in.password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
-    token = create_access_token(data={"sub": user.email})
-    return {"access_token": token, "token_type": "bearer"}
+        token = create_access_token(data={"sub": user.email})
+        return {"access_token": token, "token_type": "bearer"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Error in /auth/login: %s", e)
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while logging in.",
+        )
 
 
 @app.get("/auth/me", response_model=UserOut)
