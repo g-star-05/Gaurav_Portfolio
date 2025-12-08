@@ -1,27 +1,45 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import "./Login.css";
-
 // 🔗 Backend base URL (env in production, localhost in dev)
 const API_BASE =
-  (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) || "http://127.0.0.1:8000";
+  (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) ||
+  "http://127.0.0.1:8000";
 
-export default function Login() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import "./Signup.css";
+
+export default function Signup() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // ✅ Validate name: only letters + spaces
+    if (name === "name") {
+      const regex = /^[A-Za-z\s]*$/;
+      if (!regex.test(value)) {
+        setError("Full name should contain only letters.");
+        return;
+      } else {
+        setError("");
+      }
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    const url = `${API_BASE}/auth/login`;
-    console.log("Login → POST", url);
+    const url = `${API_BASE}/auth/register`;
+    console.log("Signup → POST", url);
 
     try {
       const res = await fetch(url, {
@@ -31,32 +49,48 @@ export default function Login() {
       });
 
       if (!res.ok) {
-        setError("Invalid email or password.");
+        // Try to surface backend error if available
+        let msg = "Signup failed! Try again.";
+        try {
+          const body = await res.json();
+          if (body?.detail) {
+            if (Array.isArray(body.detail) && body.detail[0]?.msg) {
+              msg = body.detail[0].msg;
+            } else if (typeof body.detail === "string") {
+              msg = body.detail;
+            }
+          }
+        } catch {
+          // ignore JSON parse error
+        }
+        setError(msg);
         return;
       }
 
-      const data = await res.json();
-
-      // ✅ Save token in localStorage
-      localStorage.setItem("token", data.access_token);
-      localStorage.setItem("isLoggedIn", "true");
-
-      alert("Login successful!");
-      navigate("/");
-      window.location.reload(); // refresh to update navbar instantly
+      await res.json();
+      alert("Signup successful!");
+      navigate("/login");
     } catch (err) {
-      console.error("Login error:", err);
-      setError("Something went wrong.");
+      console.error("Signup error:", err);
+      setError("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <main className="login-page">
-      <div className="login-card">
-        <h1>Welcome Back 👋</h1>
-        <p className="login-subtext">Please log in to continue</p>
+    <main className="signup-page">
+      <div className="signup-card">
+        <h1>Create an Account</h1>
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="signup-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+
           <input
             type="email"
             name="email"
@@ -66,7 +100,7 @@ export default function Login() {
             required
           />
 
-          {/* Password field with toggle */}
+          {/* Password field with eye toggle */}
           <div className="password-field">
             <input
               type={showPassword ? "text" : "password"}
@@ -79,23 +113,23 @@ export default function Login() {
             <button
               type="button"
               className="view-toggle"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword((v) => !v)}
             >
               {showPassword ? "🙈" : "👁️"}
             </button>
           </div>
 
-          {error && <p className="login-error">{error}</p>}
+          {error && <p className="signup-error">{error}</p>}
 
-          <button type="submit" className="login-submit">
-            Log In
+          <button type="submit" className="signup-submit">
+            Sign Up
           </button>
         </form>
 
-        <p className="login-footer">
-          Don’t have an account?{" "}
-          <Link to="/signup" className="signup-link">
-            Sign Up
+        <p className="signup-footer">
+          Already have an account?{" "}
+          <Link to="/login" className="login-link">
+            Login
           </Link>
         </p>
       </div>
