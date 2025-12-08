@@ -1,78 +1,62 @@
-const API_BASE =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-
-
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Signup.css";
+import { useNavigate, Link } from "react-router-dom";
+import "./Login.css";
 
-export default function Signup() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+// 🔗 Backend base URL (env in production, localhost in dev)
+const API_BASE =
+  (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) || "http://127.0.0.1:8000";
+
+export default function Login() {
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // ✅ Validate name field (only letters & spaces)
-    if (name === "name") {
-      const regex = /^[A-Za-z\s]*$/; // only A-Z, a-z, and space allowed
-      if (!regex.test(value)) {
-        setError("Full name should contain only letters.");
-        return;
-      } else {
-        setError("");
-      }
-    }
-
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+    e.preventDefault();
+    setError("");
 
-  try {
-    const res = await fetch(`${API_BASE}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    const url = `${API_BASE}/auth/login`;
+    console.log("Login → POST", url);
 
-    if (!res.ok) {
-      setError("Signup failed! Try again.");
-      return;
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        setError("Invalid email or password.");
+        return;
+      }
+
+      const data = await res.json();
+
+      // ✅ Save token in localStorage
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("isLoggedIn", "true");
+
+      alert("Login successful!");
+      navigate("/");
+      window.location.reload(); // refresh to update navbar instantly
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Something went wrong.");
     }
-
-    const data = await res.json();
-    alert("Signup successful!");
-    navigate("/login");
-  } catch (err) {
-    console.error(err);
-    setError("Something went wrong.");
-  }
-};
+  };
 
   return (
-    <main className="signup-page">
-      <div className="signup-card">
-        <h1>Create an Account</h1>
+    <main className="login-page">
+      <div className="login-card">
+        <h1>Welcome Back 👋</h1>
+        <p className="login-subtext">Please log in to continue</p>
 
-        <form className="signup-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-
+        <form className="login-form" onSubmit={handleSubmit}>
           <input
             type="email"
             name="email"
@@ -82,7 +66,7 @@ export default function Signup() {
             required
           />
 
-          {/* Password field with eye toggle */}
+          {/* Password field with toggle */}
           <div className="password-field">
             <input
               type={showPassword ? "text" : "password"}
@@ -101,18 +85,18 @@ export default function Signup() {
             </button>
           </div>
 
-          {error && <p className="signup-error">{error}</p>}
+          {error && <p className="login-error">{error}</p>}
 
-          <button type="submit" className="signup-submit">
-            Sign Up
+          <button type="submit" className="login-submit">
+            Log In
           </button>
         </form>
 
-        <p className="signup-footer">
-          Already have an account?{" "}
-          <a href="/login" className="login-link">
-            Login
-          </a>
+        <p className="login-footer">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="signup-link">
+            Sign Up
+          </Link>
         </p>
       </div>
     </main>
