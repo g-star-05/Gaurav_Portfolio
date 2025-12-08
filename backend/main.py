@@ -32,19 +32,10 @@ logger = logging.getLogger("uvicorn.error")
 
 app = FastAPI(title="Portfolio Auth Backend")
 
-# ✅ Add your current deployed frontend URL here (no trailing slash)
-FRONTEND_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://gaurav-portfolio-git-main-gaurav-tares-projects.vercel.app",
-    # keep old if you still use it:
-    # "https://gaurav-portfolio-mocha-eta.vercel.app",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=FRONTEND_ORIGINS,
-    allow_credentials=True,
+    allow_origins=["*"],        # ✅ allow every frontend origin
+    allow_credentials=False,    # ✅ must be False when using "*"
     allow_methods=["*"],
     allow_headers=["*"],
 )
