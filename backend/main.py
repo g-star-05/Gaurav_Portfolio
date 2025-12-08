@@ -1,22 +1,20 @@
 from datetime import datetime, timedelta
 from typing import Optional
-
 import logging
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
-
 from sqlalchemy import Column, Integer, String, DateTime, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # ---------------- CONFIG ----------------
 
 DATABASE_URL = "sqlite:///./users.db"
-
-SECRET_KEY = "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET"  # change in real app!
+SECRET_KEY = "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET"  # ⚠️ Replace this in production
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
 
@@ -27,19 +25,19 @@ Base = declarative_base()
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Logger setup
 logger = logging.getLogger("uvicorn.error")
 
 # ---------------- APP + CORS ----------------
 
 app = FastAPI(title="Portfolio Auth Backend")
 
-# ⚠️ USE YOUR CURRENT VERCEL URL HERE (NO TRAILING SLASH)
+# ✅ Add your current deployed frontend URL here (no trailing slash)
 FRONTEND_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    # new Vercel deployment
     "https://gaurav-portfolio-git-main-gaurav-tares-projects.vercel.app",
-    # if you still use the old one, keep it too:
+    # keep old if you still use it:
     # "https://gaurav-portfolio-mocha-eta.vercel.app",
 ]
 
@@ -84,7 +82,7 @@ class UserOut(BaseModel):
     email: EmailStr
 
     class Config:
-        from_attributes = True  # SQLAlchemy -> Pydantic
+        from_attributes = True  # SQLAlchemy → Pydantic
 
 
 class Token(BaseModel):
@@ -149,7 +147,7 @@ async def get_current_user(
 
 @app.get("/")
 def read_root():
-    return {"message": "Python backend with auth is running 👋"}
+    return {"message": "Python backend with authentication is running 👋"}
 
 
 @app.post("/contact")
@@ -181,10 +179,8 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
         db.refresh(user)
         return user
     except HTTPException:
-        # pass through “user already exists” etc
         raise
     except Exception as e:
-        # 👇 This is where you'll see INTERNAL errors in Render logs
         logger.exception("Error in /auth/register: %s", e)
         raise HTTPException(
             status_code=500,
@@ -217,4 +213,5 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
 
 @app.get("/auth/me", response_model=UserOut)
 async def read_me(current_user: User = Depends(get_current_user)):
+    # ✅ Return only the user object (was returning tuple earlier)
     return current_user
