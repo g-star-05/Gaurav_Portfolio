@@ -1,9 +1,11 @@
-const API_BASE =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
+
+// 🔗 Backend base URL (env in production, localhost in dev)
+const API_BASE = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL.replace(/\/+$/, "") // trim trailing slashes
+  : "http://127.0.0.1:8000";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -19,15 +21,27 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
+    const url = `${API_BASE}/auth/login`;
+    console.log("Login → POST", url, "payload:", formData);
+
     try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(formData),
-});
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       if (!res.ok) {
-        setError("Invalid email or password.");
+        const text = await res.text();
+        console.error("Login failed:", res.status, text);
+
+        if (res.status === 401) {
+          setError("Invalid email or password.");
+        } else if (res.status === 404) {
+          setError("Login API not found. Check backend URL / deploy.");
+        } else {
+          setError("Login failed. Please try again.");
+        }
         return;
       }
 
@@ -41,8 +55,8 @@ export default function Login() {
       navigate("/");
       window.location.reload(); // refresh to update navbar instantly
     } catch (err) {
-      console.error(err);
-      setError("Something went wrong.");
+      console.error("Login error:", err);
+      setError("Network error. Please try again.");
     }
   };
 

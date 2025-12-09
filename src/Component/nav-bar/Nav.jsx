@@ -8,7 +8,6 @@ export default function Nav() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is logged in (on load)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) setIsLoggedIn(true);
@@ -19,7 +18,6 @@ export default function Nav() {
     document.body.classList.toggle("light", initialTheme === "light");
   }, []);
 
-  // Toggle day/night
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
@@ -27,14 +25,13 @@ export default function Nav() {
     localStorage.setItem("theme", newTheme);
   };
 
-  // Logout function
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("isLoggedIn");
     setIsLoggedIn(false);
     alert("Logged out successfully!");
     navigate("/");
-    window.location.reload(); // refresh navbar
+    window.location.reload();
   };
 
   const closeDrawer = () => setOpen(false);
@@ -42,18 +39,21 @@ export default function Nav() {
   return (
     <nav className="nav">
       <div className="nav-container">
+        {/* Brand */}
         <NavLink to="/" className="brand" onClick={closeDrawer}>
           Gaurav<span className="brand-accent">...</span>
         </NavLink>
 
-        {/* Desktop Menu */}
+        {/* Desktop Menu (visible on desktop only) */}
         <div className="menu">
           <NavLink to="/services">Services</NavLink>
           <NavLink to="/projects">Projects</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/contact">Contact</NavLink>
+        </div>
 
-          {/* Conditional Login/Logout */}
+        {/* Right Side: Login + Theme + Hamburger */}
+        <div className="nav-right">
           {isLoggedIn ? (
             <button onClick={handleLogout} className="login-btn logout">
               Logout
@@ -64,24 +64,25 @@ export default function Nav() {
             </NavLink>
           )}
 
+          {/* Theme Toggle */}
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === "dark" ? "🌙" : "☀️"}
           </button>
-        </div>
 
-        {/* Hamburger */}
-        <button
-          className={`hamburger ${open ? "active" : ""}`}
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+          {/* Hamburger (mobile only) */}
+          <button
+            className={`hamburger ${open ? "active" : ""}`}
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Drawer (mobile only) */}
       <div className={`drawer ${open ? "open" : ""}`}>
         <div className="drawer-inner">
           <NavLink to="/services" onClick={closeDrawer}>
@@ -96,20 +97,6 @@ export default function Nav() {
           <NavLink to="/contact" onClick={closeDrawer}>
             Contact
           </NavLink>
-
-          {isLoggedIn ? (
-            <button onClick={handleLogout} className="drawer-link logout">
-              Logout
-            </button>
-          ) : (
-            <NavLink to="/login" onClick={closeDrawer} className="drawer-link">
-              Login
-            </NavLink>
-          )}
-
-          <button className="theme-toggle" onClick={toggleTheme}>
-            {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
-          </button>
         </div>
       </div>
     </nav>
