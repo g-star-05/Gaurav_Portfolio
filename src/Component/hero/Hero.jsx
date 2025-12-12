@@ -1,4 +1,6 @@
+// src/Component/hero/Hero.jsx
 import React from "react";
+import { Link } from "react-router-dom";   // ✅ add this
 import "./Hero.css";
 import heroImg from "../../assets/hero-photo.png";
 
@@ -17,14 +19,20 @@ const Hero = () => {
             <h1 className="hero__intro">
               <span className="hero__border"></span>
               I’m&nbsp;<span className="hero__name">Gaurav Tare</span>
-              
             </h1>
             <h1 className="hero__role">Web&nbsp;Developer</h1>
           </div>
 
           <div className="hero__cta">
-            <a href="#contact" className="btn btn--primary">Got a project?</a>
-            <a href="#resume" className="btn btn--ghost">My resume</a>
+            {/* ✅ Now goes to /project route */}
+            <Link to="/project" className="btn btn--primary">
+              Got a project?
+            </Link>
+
+            {/* You can later link this to a real resume URL */}
+            <a href="#resume" className="btn btn--ghost">
+              My resume
+            </a>
           </div>
         </div>
 
@@ -38,8 +46,13 @@ const Hero = () => {
 
       <div className="hero__skillsWrap">
         <ul className="hero__skills">
-          <li>HTML</li><li>CSS</li><li>JavaScript</li>
-          <li>Node.js</li><li>React</li><li>Git</li><li>GitHub</li>
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>JavaScript</li>
+          <li>Node.js</li>
+          <li>React</li>
+          <li>Git</li>
+          <li>GitHub</li>
         </ul>
       </div>
     </section>

@@ -1,0 +1,342 @@
+/* === PROJECT REQUEST PAGE === */
+
+/* Full page wrapper */
+.project-page {
+  min-height: calc(100vh - var(--nav-h, 64px));
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 16px 48px;
+  background: radial-gradient(
+    circle at top,
+    var(--bg-card, #131c24),
+    var(--bg-main, #0b1218)
+  );
+  color: var(--text-main, #f9fafb);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* 🌞 Light mode override (works with Nav toggle) */
+body.light .project-page {
+  background: linear-gradient(180deg, #ffffff, #f2f4f8);
+  color: #111827;
+}
+
+/* Card */
+.project-card {
+  width: 100%;
+  max-width: 860px;
+  background: var(--bg-card, #131c24);
+  border-radius: 20px;
+  padding: 28px 24px 32px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  backdrop-filter: blur(12px);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* 🌞 Light mode for card */
+body.light .project-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Header */
+.project-header h1 {
+  margin: 0 0 6px;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 800;
+}
+
+.project-header p {
+  margin: 0 0 18px;
+  color: var(--text-muted, #9ca3af);
+  font-size: 0.95rem;
+}
+
+/* Light mode text color */
+body.light .project-header p {
+  color: #555;
+}
+
+/* Sections */
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.project-section h2 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+/* Grid for basic details */
+.project-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .project-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main, #f9fafb);
+}
+
+body.light .field label {
+  color: #111827;
+}
+
+.req {
+  color: #fb7185;
+}
+
+/* Inputs / textarea / select */
+.project-form input,
+.project-form textarea,
+.project-form select {
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-main, #f9fafb);
+  font-size: 0.95rem;
+  padding: 9px 11px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease,
+    background 0.2s ease;
+  width: 100%;
+  resize: vertical;
+}
+
+/* Light mode input styles */
+body.light .project-form input,
+body.light .project-form textarea,
+body.light .project-form select {
+  background: #f9fafb;
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.project-form input::placeholder,
+.project-form textarea::placeholder {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+body.light .project-form input::placeholder,
+body.light .project-form textarea::placeholder {
+  color: #777;
+}
+
+.project-form input:focus,
+.project-form textarea:focus,
+.project-form select:focus {
+  border-color: var(--accent, #fb923c);
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--accent, #fb923c), transparent 40%);
+}
+
+/* Radio pills */
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.radio-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-main, #f9fafb);
+  background: rgba(15, 23, 42, 0.8);
+  transition: border-color 0.2s ease, background 0.2s ease,
+    transform 0.15s ease;
+}
+
+body.light .radio-pill {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.radio-pill input {
+  accent-color: var(--accent, #fb923c);
+}
+
+.radio-pill:hover {
+  border-color: var(--accent, #fb923c);
+  transform: translateY(-1px);
+}
+
+/* Status messages */
+.project-status {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.project-status--success {
+  background: rgba(22, 163, 74, 0.15);
+  border: 1px solid rgba(22, 163, 74, 0.7);
+  color: #bbf7d0;
+}
+
+.project-status--error {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.9);
+  color: #fecaca;
+}
+
+/* Submit row */
+.project-submitRow {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.project-submitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: #111827;
+  font-weight: 700;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.project-submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(251, 146, 60, 0.6);
+}
+
+.project-submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* small inline spinner reused from auth pages */
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  animation: spin-btn 0.6s linear infinite;
+}
+
+/* -------- Preferred contact method (modern chips) -------- */
+
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* Whole pill is the label */
+.radio-pill {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* hide the native radio */
+.radio-pill input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* visible pill */
+.radio-pill span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-main, #f9fafb);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+/* light mode pill base */
+body.light .radio-pill span {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* hover state (when not focused/checked) */
+.radio-pill:hover span {
+  border-color: var(--accent, #fb923c);
+  transform: translateY(-1px);
+}
+
+/* checked → filled chip */
+.radio-pill input:checked + span {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: #111827;
+  border-color: transparent;
+  box-shadow: 0 10px 25px rgba(251, 146, 60, 0.45);
+  transform: translateY(-1px);
+}
+
+/* focus ring (keyboard users) */
+.radio-pill input:focus-visible + span {
+  box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.7);
+}
+
+
+@keyframes spin-btn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+  .project-card {
+    padding: 22px 18px 26px;
+  }
+
+  .project-submitRow {
+    justify-content: center;
+  }
+}

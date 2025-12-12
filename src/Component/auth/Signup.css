@@ -1,4 +1,4 @@
-/* === SIGNUP PAGE (DAY/NIGHT THEME READY) === */
+/* === SIGNUP PAGE WRAPPER === */
 .signup-page {
   min-height: calc(100vh - 64px);
   display: flex;
@@ -8,16 +8,16 @@
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Card */
+/* === CARD === */
 .signup-card {
   width: 100%;
   max-width: 420px;
   background: var(--bg-card);
   border-radius: 18px;
   padding: 32px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  backdrop-filter: blur(14px);
   text-align: center;
   color: var(--text-main);
   transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
@@ -30,23 +30,23 @@
   font-size: 1.6rem;
 }
 
-/* Form layout */
+/* === FORM === */
 .signup-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-/* Input fields */
+/* Inputs */
 .signup-form input {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid rgba(148, 163, 184, 0.35);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-main);
   font-size: 1rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .signup-form input:focus {
@@ -54,7 +54,7 @@
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent), transparent 40%);
 }
 
-/* Password field */
+/* === PASSWORD FIELD (eye toggle) === */
 .password-field {
   position: relative;
   width: 100%;
@@ -62,10 +62,9 @@
 
 .password-field input {
   width: 100%;
-  padding-right: 40px; /* space for the eye icon */
+  padding-right: 40px;
 }
 
-/* 👁️ Toggle button */
 .view-toggle {
   position: absolute;
   right: 10px;
@@ -75,12 +74,12 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  color: var(--text-muted);
+  color: var(--text-muted, #999);
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .view-toggle:hover {
-  color: var(--accent);
+  color: var(--accent, #fb923c);
   transform: translateY(-50%) scale(1.1);
 }
 
@@ -88,23 +87,30 @@
   outline: none;
 }
 
-/* Error message */
+/* === ERROR TEXT === */
 .signup-error {
   color: #ef4444;
   font-size: 0.9rem;
-  margin-top: -6px;
+  margin-top: -2px;
 }
 
-/* Submit button */
+/* === SUBMIT BUTTON WITH LOADER === */
 .signup-submit {
+  margin-top: 8px;
   padding: 10px 16px;
   border-radius: 999px;
   border: none;
-  background: yellow;
-  color: orangered;
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: #111827;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 170px;
 }
 
 .signup-submit:hover {
@@ -112,42 +118,44 @@
   box-shadow: 0 16px 30px rgba(251, 146, 60, 0.6);
 }
 
-/* Footer */
-.signup-footer {
-  margin-top: 12px;
-  font-size: 0.9rem;
-  color: var(--text-muted);
+.signup-submit[disabled] {
+  opacity: 0.8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
-.signup-footer a {
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s ease;
+/* shimmer while loading */
+.signup-submit.is-loading {
+  background: linear-gradient(
+    120deg,
+    #fb923c,
+    #f97316,
+    #fed7aa,
+    #f97316,
+    #fb923c
+  );
+  background-size: 220% 220%;
+  animation: btn-shimmer 1.3s linear infinite;
 }
 
-.signup-footer a:hover {
-  color: color-mix(in srgb, var(--accent), white 25%);
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 480px) {
-  .signup-card {
-    padding: 24px;
-    border-radius: 14px;
+@keyframes btn-shimmer {
+  0% {
+    background-position: 0% 50%;
   }
-  .signup-card h1 {
-    font-size: 1.4rem;
+  100% {
+    background-position: 200% 50%;
   }
 }
-/* small inline spinner for buttons */
+
+/* === SMALL INLINE SPINNER (shared with login) === */
 .btn-spinner {
+  display: inline-block;
   width: 16px;
   height: 16px;
   border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
-  margin-right: 8px;
+  border: 2px solid rgba(17, 24, 39, 0.25);
+  border-top-color: #111827;
   animation: spin-btn 0.6s linear infinite;
 }
 
@@ -157,11 +165,28 @@
   }
 }
 
-/* disabled state for auth buttons */
-.login-submit[disabled],
-.signup-submit[disabled] {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
+/* === FOOTER TEXT === */
+.signup-footer {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.signup-footer .login-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.signup-footer .login-link:hover {
+  color: color-mix(in srgb, var(--accent), white 20%);
+}
+
+/* small screens */
+@media (max-width: 480px) {
+  .signup-card {
+    margin-inline: 16px;
+    padding: 24px;
+  }
 }

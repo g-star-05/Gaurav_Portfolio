@@ -1,3 +1,5 @@
+// src/Component/auth/Signup.jsx
+
 // 🔗 Backend base URL (env in production, localhost in dev)
 const API_BASE =
   (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) || "http://127.0.0.1:8000";
@@ -14,12 +16,13 @@ export default function Signup() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);    // 👈 loader
+  const [loading, setLoading] = useState(false); // 👈 loader
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // ✅ Full name: only letters + spaces
     if (name === "name") {
       const regex = /^[A-Za-z\s]*$/;
       if (!regex.test(value)) {
@@ -30,13 +33,13 @@ export default function Signup() {
       }
     }
 
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);                               // 👈 start loader
+    setLoading(true);
 
     const url = `${API_BASE}/auth/register`;
     console.log("Signup → POST", url, "payload:", formData);
@@ -59,7 +62,9 @@ export default function Signup() {
               msg = body.detail;
             }
           }
-        } catch (_) {}
+        } catch {
+          // ignore JSON parse error
+        }
         setError(msg);
         return;
       }
@@ -69,9 +74,9 @@ export default function Signup() {
       navigate("/login");
     } catch (err) {
       console.error("Signup error:", err);
-      setError("Something went wrong. Please try again.");
+      setError("Network error. Please try again.");
     } finally {
-      setLoading(false);                            // 👈 stop loader
+      setLoading(false);
     }
   };
 
@@ -99,7 +104,7 @@ export default function Signup() {
             required
           />
 
-          {/* Password field with eye toggle */}
+          {/* Password with eye toggle */}
           <div className="password-field">
             <input
               type={showPassword ? "text" : "password"}
@@ -112,7 +117,7 @@ export default function Signup() {
             <button
               type="button"
               className="view-toggle"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword((v) => !v)}
             >
               {showPassword ? "🙈" : "👁️"}
             </button>
@@ -122,7 +127,7 @@ export default function Signup() {
 
           <button
             type="submit"
-            className="signup-submit"
+            className={`signup-submit ${loading ? "is-loading" : ""}`}
             disabled={loading}
           >
             {loading ? (

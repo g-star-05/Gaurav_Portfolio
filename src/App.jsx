@@ -21,11 +21,15 @@ import Service from "./Component/services/Service";
 import "./Component/services/Service.css";
 
 // Auth
-import Login from "./Component/auth/Login";      // <- make sure file is Login.jsx
+import Login from "./Component/auth/Login";
 import "./Component/auth/Login.css";
 
-import Signup from "./Component/auth/Signup";    // <- file: Signup.jsx
+import Signup from "./Component/auth/Signup";
 import "./Component/auth/Signup.css";
+
+// 🆕 Project Request Page
+import ProjectRequest from "./Component/project-request/ProjectRequest";
+import "./Component/project-request/ProjectRequest.css";
 
 export default function App() {
   return (
@@ -33,7 +37,7 @@ export default function App() {
       <Nav />
 
       <Routes>
-        {/* Home page */}
+        {/* Home Page */}
         <Route
           path="/"
           element={
@@ -46,7 +50,7 @@ export default function App() {
           }
         />
 
-        {/* About page */}
+        {/* About Page */}
         <Route
           path="/about"
           element={
@@ -57,7 +61,7 @@ export default function App() {
           }
         />
 
-        {/* Projects page */}
+        {/* Projects Page */}
         <Route
           path="/projects"
           element={
@@ -68,7 +72,7 @@ export default function App() {
           }
         />
 
-        {/* Services page */}
+        {/* Services Page */}
         <Route
           path="/services"
           element={
@@ -79,16 +83,27 @@ export default function App() {
           }
         />
 
-        {/* Contact / Footer page */}
+        {/* Contact Page */}
         <Route path="/contact" element={<Footer />} />
 
-        {/* Login page */}
+        {/* 🆕 Project Request Page */}
+        <Route
+          path="/project"
+          element={
+            <>
+              <ProjectRequest />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* Login Page */}
         <Route path="/login" element={<Login />} />
 
-        {/* Signup page */}
+        {/* Signup Page */}
         <Route path="/signup" element={<Signup />} />
 
-        {/* 404 page */}
+        {/* 404 Page */}
         <Route
           path="*"
           element={

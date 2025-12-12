@@ -1,26 +1,22 @@
 /* ---- local tokens ---- */
 /* ---- Hero section ---- */
 .hero {
-  /* pick colors from global theme instead of hard-coded */
-  --ink: var(--text-main, #eef3f7);    /* main text color */
+  --ink: var(--text-main, hsl(207, 36%, 95%));    /* main text color */
   --muted: var(--text-muted, #9fb0be); /* softer text */
-  --brand:#ff713dc4;     /* orange accent from theme */
-  --ring: #ff8a50;                     /* you can keep this fixed or derive later */
+  --brand: #ff713df1;                  /* orange accent */
+  --ring: #ff8a50;
   --max: 1200px;
   --nav-h: var(--nav-h, 64px);
 
   color: var(--ink);
-
-  /* 🔄 background follows theme now, with safe fallbacks */
-  background: var(--bg-main);
+  background: var(--bg-main, #0b1218);
 
   inline-size: 100%;
   min-block-size: calc(100svh - var(--nav-h));
   display: grid;
-  grid-template-rows: 1fr auto; /* main + skills row */
+  grid-template-rows: 1fr auto;
   overflow: hidden;
 }
-
 
 /* ===== Layout ===== */
 .hero__container {
@@ -30,10 +26,12 @@
   display: grid;
   gap: clamp(20px, 4vw, 48px);
   align-items: center;
-  grid-template-columns: 1fr;        /* mobile-first */
+  grid-template-columns: 1fr;
 }
 @media (min-width: 960px) {
-  .hero__container { grid-template-columns: 1.1fr 0.9fr; }
+  .hero__container {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
 }
 
 /* ===== Text block ===== */
@@ -56,11 +54,11 @@
 .hero__hello {
   font-size: clamp(26px, 5vw, 36px);
   font-weight: 800;
-  letter-spacing: .4px;
+  letter-spacing: 0.4px;
   color: var(--brand);
 }
 
-/* Horizontal: "I'm Gaurav | Web Developer" */
+/* Horizontal title row */
 .hero__titleRow {
   display: flex;
   flex-wrap: wrap;
@@ -70,7 +68,6 @@
   line-height: 1.1;
 }
 
-/* 👇 use theme text color instead of #fff */
 .hero__intro {
   display: flex;
   align-items: center;
@@ -78,7 +75,7 @@
   margin: 0;
   font-size: clamp(22px, 4.8vw, 40px);
   font-weight: 700;
-  color: var(--ink);    /* was #fff */
+  color: var(--ink);
 }
 
 .hero__border {
@@ -88,18 +85,16 @@
   border-radius: 2px;
 }
 
-/* highlighted name stays orange */
 .hero__name {
   color: var(--brand);
   font-weight: 800;
 }
 
-/* 👇 THIS is the “I'm Web Developer” line – now theme-aware */
 .hero__role {
   margin: 0;
   font-size: clamp(22px, 4.8vw, 40px);
   font-weight: 800;
-  color: var(--ink);    /* was #fff -> now white in dark, black in light */
+  color: var(--ink);
 }
 
 /* Buttons */
@@ -117,20 +112,18 @@
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
-  transition:
-    transform .12s ease,
-    box-shadow .2s ease,
-    border-color .2s ease,
-    background .2s ease;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+    background 0.2s ease;
 }
 .btn--primary {
   background: yellow;
-  color: orangered;
-  box-shadow: 0 10px 24px rgba(255,106,61,0.22);
+  color: rgb(255, 108, 55);
+  box-shadow: 0 10px 24px rgba(255, 106, 61, 0.22);
 }
-.btn--primary:hover { transform: translateY(-1px); }
+.btn--primary:hover {
+  transform: translateY(-1px);
+}
 
-/* ghost button now uses ink/muted so it also adapts in light mode */
 .btn--ghost {
   color: var(--ink);
   background: transparent;
@@ -141,11 +134,11 @@
   transform: translateY(-1px);
 }
 
-/* ===== Visual (photo + ORANGE RING) ===== */
-.hero__visual { display: grid; place-items: center; }
-
-/* Make the ring very visible + responsive.
-   clamp(minSize, preferred, maxSize) keeps it perfect at all breakpoints. */
+/* ===== Visual (photo + ring) ===== */
+.hero__visual {
+  display: grid;
+  place-items: center;
+}
 .hero__ring {
   position: relative;
   inline-size: clamp(220px, 42vw, 420px);
@@ -153,40 +146,33 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  /* inner glow */
-  background:
-    radial-gradient(closest-side, rgba(255,138,80,.38), transparent 64%),
-    radial-gradient(closest-side, rgba(255,106,61,.18), transparent 72%),
-    radial-gradient(closest-side, rgba(255,106,61,.10), transparent 78%);
-  filter: drop-shadow(0 24px 48px rgba(255,106,61,.18));
+  background: radial-gradient(closest-side, rgba(255, 138, 80, 0.38), transparent 64%),
+    radial-gradient(closest-side, rgba(255, 106, 61, 0.18), transparent 72%),
+    radial-gradient(closest-side, rgba(255, 106, 61, 0.1), transparent 78%);
+  filter: drop-shadow(0 24px 48px rgba(255, 106, 61, 0.18));
 }
-
-/* crisp orange ring outline */
 .hero__ring::before {
   content: "";
   position: absolute;
   inset: 7%;
   border-radius: 50%;
-  border: 3px solid rgba(255,138,80,.55);
-  box-shadow:
-    0 0 28px rgba(255,138,80,.25),
-    inset 0 0 12px rgba(255,106,61,.15);
+  border: 3px solid rgba(255, 138, 80, 0.55);
+  box-shadow: 0 0 28px rgba(255, 138, 80, 0.25),
+    inset 0 0 12px rgba(255, 106, 61, 0.15);
   pointer-events: none;
 }
-
-/* Photo size: smaller on mobile, balanced on desktop */
 .hero__img {
   max-inline-size: clamp(62%, 68%, 78%);
   display: block;
   border-radius: 50%;
   object-fit: cover;
-  filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.55));
 }
 
 /* ===== Skills row ===== */
 .hero__skillsWrap {
-  border-top: 1px solid rgba(255,255,255,.06);
-  background: linear-gradient(180deg, transparent, rgba(255,255,255,.02));
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02));
 }
 .hero__skills {
   list-style: none;
@@ -202,18 +188,35 @@
 .hero__skills li {
   padding: 10px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 171, 125, 0.092);
-  color: var(--muted);   /* was fixed #a9b4bf */
+  color: var(--muted);
   font-weight: 600;
-  font-size: .95rem;
+  font-size: 0.95rem;
 }
 
-/* ===== Safety: never exceed viewport width ===== */
-.hero,
-.hero__container,
-.hero__skillsWrap,
-.hero__skills {
-  inline-size: 100%;
-  max-inline-size: 100%;
+/* ===== Light Mode Overrides ===== */
+body.light .hero {
+  --ink: #111827; /* black text */
+  --muted: #4b5563; /* softer gray */
+  --bg-main: #f9fafb; /* light background */
+}
+
+body.light .hero__skillsWrap {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.03));
+}
+
+body.light .hero__skills li {
+  border-color: rgba(0, 0, 0, 0.08);
+  background: rgba(255, 204, 170, 0.15);
+  color: var(--muted);
+}
+
+body.light .btn--ghost {
+  color: var(--ink);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+body.light .btn--ghost:hover {
+  border-color: rgba(0, 0, 0, 0.5);
 }
