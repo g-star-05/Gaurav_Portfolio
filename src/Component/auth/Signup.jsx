@@ -1,7 +1,6 @@
 // 🔗 Backend base URL (env in production, localhost in dev)
 const API_BASE =
-  (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) ||
-  "http://127.0.0.1:8000";
+  (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) || "http://127.0.0.1:8000";
 
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -15,12 +14,12 @@ export default function Signup() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);    // 👈 loader
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // ✅ Validate name: only letters + spaces
     if (name === "name") {
       const regex = /^[A-Za-z\s]*$/;
       if (!regex.test(value)) {
@@ -31,15 +30,16 @@ export default function Signup() {
       }
     }
 
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);                               // 👈 start loader
 
     const url = `${API_BASE}/auth/register`;
-    console.log("Signup → POST", url);
+    console.log("Signup → POST", url, "payload:", formData);
 
     try {
       const res = await fetch(url, {
@@ -49,7 +49,6 @@ export default function Signup() {
       });
 
       if (!res.ok) {
-        // Try to surface backend error if available
         let msg = "Signup failed! Try again.";
         try {
           const body = await res.json();
@@ -60,9 +59,7 @@ export default function Signup() {
               msg = body.detail;
             }
           }
-        } catch {
-          // ignore JSON parse error
-        }
+        } catch (_) {}
         setError(msg);
         return;
       }
@@ -73,6 +70,8 @@ export default function Signup() {
     } catch (err) {
       console.error("Signup error:", err);
       setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);                            // 👈 stop loader
     }
   };
 
@@ -113,7 +112,7 @@ export default function Signup() {
             <button
               type="button"
               className="view-toggle"
-              onClick={() => setShowPassword((v) => !v)}
+              onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? "🙈" : "👁️"}
             </button>
@@ -121,8 +120,19 @@ export default function Signup() {
 
           {error && <p className="signup-error">{error}</p>}
 
-          <button type="submit" className="signup-submit">
-            Sign Up
+          <button
+            type="submit"
+            className="signup-submit"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="btn-spinner" />
+                <span>Creating account...</span>
+              </>
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </form>
 

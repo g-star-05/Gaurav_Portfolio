@@ -1,18 +1,14 @@
-/* === LOGIN PAGE === */
+/* === LOGIN PAGE WRAPPER === */
 .login-page {
   min-height: calc(100vh - 64px);
   display: flex;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(
-    circle at top,
-    var(--bg-card),
-    var(--bg-main)
-  );
+  background: radial-gradient(circle at top, var(--bg-card), var(--bg-main));
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Card */
+/* === CARD === */
 .login-card {
   background: var(--bg-card);
   border-radius: 18px;
@@ -27,21 +23,20 @@
   transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Title */
+/* Title + subtext */
 .login-card h1 {
   color: var(--text-main);
   margin-bottom: 6px;
   font-size: 1.6rem;
 }
 
-/* Subtext */
 .login-subtext {
   color: var(--text-muted);
   font-size: 0.95rem;
   margin-bottom: 20px;
 }
 
-/* Form */
+/* === FORM === */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -65,7 +60,7 @@
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent), transparent 40%);
 }
 
-/* Password field (eye icon area) */
+/* === PASSWORD FIELD (eye icon) === */
 .password-field {
   position: relative;
   width: 100%;
@@ -98,23 +93,29 @@
   outline: none;
 }
 
-/* Error text */
+/* === ERROR TEXT === */
 .login-error {
   color: #ef4444;
   font-size: 0.9rem;
 }
 
-/* Submit button */
+/* === SUBMIT BUTTON WITH LOADER === */
 .login-submit {
   margin-top: 8px;
   padding: 10px 16px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, var(--accent), #f97316);
+  background: linear-gradient(135deg, #fbbf24, #fb923c);
   color: #111827;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 160px;
 }
 
 .login-submit:hover {
@@ -122,7 +123,55 @@
   box-shadow: 0 16px 30px rgba(251, 146, 60, 0.6);
 }
 
-/* Footer text */
+/* disabled state */
+.login-submit[disabled] {
+  opacity: 0.8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* little shimmer when loading */
+.login-submit.is-loading {
+  background: linear-gradient(
+    120deg,
+    #fbbf24,
+    #fb923c,
+    #fed7aa,
+    #fb923c,
+    #fbbf24
+  );
+  background-size: 220% 220%;
+  animation: btn-shimmer 1.3s linear infinite;
+}
+
+@keyframes btn-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* === SMALL INLINE SPINNER === */
+.btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(17, 24, 39, 0.2);
+  border-top-color: #111827;
+  animation: spin-btn 0.6s linear infinite;
+}
+
+@keyframes spin-btn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === FOOTER TEXT === */
 .login-footer {
   margin-top: 14px;
   font-size: 0.9rem;
@@ -139,4 +188,12 @@
 
 .signup-link:hover {
   color: color-mix(in srgb, var(--accent), white 20%);
+}
+
+/* small screens */
+@media (max-width: 480px) {
+  .login-card {
+    margin-inline: 16px;
+    padding: 24px;
+  }
 }

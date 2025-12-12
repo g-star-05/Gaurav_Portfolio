@@ -103,7 +103,7 @@
   border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent 75%);
   padding: 6px 10px;
   font-size: 12px;
-  color: var(--muted);
+  color: orangered;
   border-radius: 999px;
   pointer-events: none;
   backdrop-filter: blur(4px);
@@ -182,7 +182,7 @@
 
 .btn--primary {
   background: var(--brand);
-  color: #1b0f0a;
+  color: #FFAA1D;
   box-shadow: 0 10px 24px rgba(255, 106, 61, 0.22);
 }
 .btn--primary:hover {
@@ -190,15 +190,19 @@
 }
 
 /* ghost borders now based on theme ink, not hard-coded white */
+/* Global ghost button – always orange, so it's visible on both themes */
 .btn--ghost {
-  color: var(--ink);
+  color: orangered; /* text = orange */
   background: transparent;
-  border-color: color-mix(in srgb, var(--ink) 22%, transparent 78%);
+  border-color: color-mix(in srgb, var(--brand) 70%, transparent 30%);
 }
+
 .btn--ghost:hover {
-  border-color: color-mix(in srgb, var(--ink) 40%, transparent 60%);
+  background: color-mix(in srgb, var(--brand) 15%, transparent 85%);
+  border-color: var(--brand);
   transform: translateY(-1px);
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -100,8 +100,8 @@
   padding: 10px 16px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, var(--accent), #f97316);
-  color: #111827;
+  background: yellow;
+  color: orangered;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -139,4 +139,29 @@
   .signup-card h1 {
     font-size: 1.4rem;
   }
+}
+/* small inline spinner for buttons */
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  margin-right: 8px;
+  animation: spin-btn 0.6s linear infinite;
+}
+
+@keyframes spin-btn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* disabled state for auth buttons */
+.login-submit[disabled],
+.signup-submit[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }

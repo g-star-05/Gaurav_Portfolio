@@ -4,7 +4,7 @@
   /* pick colors from global theme instead of hard-coded */
   --ink: var(--text-main, #eef3f7);    /* main text color */
   --muted: var(--text-muted, #9fb0be); /* softer text */
-  --brand: var(--accent, #ff6a3d);     /* orange accent from theme */
+  --brand:#ff713dc4;     /* orange accent from theme */
   --ring: #ff8a50;                     /* you can keep this fixed or derive later */
   --max: 1200px;
   --nav-h: var(--nav-h, 64px);
@@ -124,9 +124,9 @@
     background .2s ease;
 }
 .btn--primary {
-  background: var(--brand);
-  color: #1b0f0a;
-  box-shadow: 0 10px 24px rgba(255,106,61,.22);
+  background: yellow;
+  color: orangered;
+  box-shadow: 0 10px 24px rgba(255,106,61,0.22);
 }
 .btn--primary:hover { transform: translateY(-1px); }
 

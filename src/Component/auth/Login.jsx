@@ -1,25 +1,27 @@
+// src/Component/auth/Login.jsx
+// 🔗 Backend base URL (env in production, localhost in dev)
+const API_BASE =
+  (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) || "http://127.0.0.1:8000";
+
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
-
-// 🔗 Backend base URL (env in production, localhost in dev)
-const API_BASE = import.meta.env.VITE_API_URL
-  ? import.meta.env.VITE_API_URL.replace(/\/+$/, "") // trim trailing slashes
-  : "http://127.0.0.1:8000";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // 👈 loader state
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     const url = `${API_BASE}/auth/login`;
     console.log("Login → POST", url, "payload:", formData);
@@ -38,7 +40,7 @@ export default function Login() {
         if (res.status === 401) {
           setError("Invalid email or password.");
         } else if (res.status === 404) {
-          setError("Login API not found. Check backend URL / deploy.");
+          setError("Login API not found. Check backend URL.");
         } else {
           setError("Login failed. Please try again.");
         }
@@ -47,16 +49,18 @@ export default function Login() {
 
       const data = await res.json();
 
-      // ✅ Save token in localStorage
+      // Save token + flag
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("isLoggedIn", "true");
 
       alert("Login successful!");
       navigate("/");
-      window.location.reload(); // refresh to update navbar instantly
+      window.location.reload();
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,7 +68,7 @@ export default function Login() {
     <main className="login-page">
       <div className="login-card">
         <h1>Welcome Back 👋</h1>
-        <p className="login-subtext">Please log in to continue</p>
+        <p className="login-subtext">Log in to continue to your dashboard</p>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <input
@@ -76,7 +80,6 @@ export default function Login() {
             required
           />
 
-          {/* Password field with toggle */}
           <div className="password-field">
             <input
               type={showPassword ? "text" : "password"}
@@ -89,7 +92,7 @@ export default function Login() {
             <button
               type="button"
               className="view-toggle"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword((v) => !v)}
             >
               {showPassword ? "🙈" : "👁️"}
             </button>
@@ -97,8 +100,19 @@ export default function Login() {
 
           {error && <p className="login-error">{error}</p>}
 
-          <button type="submit" className="login-submit">
-            Log In
+          <button
+            type="submit"
+            className={`login-submit ${loading ? "is-loading" : ""}`}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="btn-spinner" />
+                <span>Logging you in...</span>
+              </>
+            ) : (
+              "Log In"
+            )}
           </button>
         </form>
 
