@@ -1,6 +1,8 @@
+// src/Component/project-request/ProjectRequest.jsx
 import React, { useState, useEffect } from "react";
 import "./ProjectRequest.css";
 
+// use same pattern as Login/Signup
 const API_BASE =
   (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) || "http://127.0.0.1:8000";
 
@@ -20,7 +22,9 @@ const defaultForm = {
 export default function ProjectRequest() {
   const [form, setForm] = useState(defaultForm);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState(null); // { type: "success" | "error", msg: string }
+
+  // 🌗 theme state (shared with rest of site via body + localStorage)
   const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
@@ -30,24 +34,35 @@ export default function ProjectRequest() {
     document.body.classList.toggle("light", initial === "light");
   }, []);
 
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.body.classList.toggle("light", next === "light");
+    localStorage.setItem("theme", next);
+  };
+
+  // ✅ VALIDATION ADDED HERE
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // ✅ Full name — allow only letters and spaces
+    // Full name → only letters & spaces
     if (name === "fullName") {
-      const onlyLetters = value.replace(/[^A-Za-z\s]/g, "");
-      setForm((f) => ({ ...f, [name]: onlyLetters }));
-      return;
+      const onlyLetters = /^[A-Za-z\s]*$/;
+      if (!onlyLetters.test(value)) {
+        // ignore invalid keystroke
+        return;
+      }
     }
 
-    // ✅ Phone — allow only digits (+ optional at start)
+    // Phone → only digits
     if (name === "phone") {
-      const onlyNumbers = value.replace(/[^0-9+]/g, "");
-      setForm((f) => ({ ...f, [name]: onlyNumbers }));
-      return;
+      const onlyDigits = /^[0-9]*$/;
+      if (!onlyDigits.test(value)) {
+        // ignore invalid keystroke
+        return;
+      }
     }
 
-    // default
     setForm((f) => ({ ...f, [name]: value }));
   };
 
@@ -55,29 +70,11 @@ export default function ProjectRequest() {
     e.preventDefault();
     setStatus(null);
 
-    // Basic validation
+    // basic required checks
     if (!form.fullName || !form.email || !form.projectType || !form.description) {
       setStatus({
         type: "error",
         msg: "Please fill all required fields marked with *.",
-      });
-      return;
-    }
-
-    // ✅ Full Name validation (only alphabets)
-    if (!/^[A-Za-z\s]+$/.test(form.fullName)) {
-      setStatus({
-        type: "error",
-        msg: "Full name should contain only letters.",
-      });
-      return;
-    }
-
-    // ✅ Phone validation (optional but must be numeric if filled)
-    if (form.phone && !/^\+?[0-9]{7,15}$/.test(form.phone)) {
-      setStatus({
-        type: "error",
-        msg: "Please enter a valid phone number (digits only, 7–15 long).",
       });
       return;
     }
@@ -175,16 +172,162 @@ export default function ProjectRequest() {
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="+91 9876543210"
+                  placeholder="+91 98765 43210"
                   value={form.phone}
                   onChange={handleChange}
+                  inputMode="numeric"
                 />
               </div>
             </div>
           </section>
 
-          {/* 2–7 Sections remain unchanged */}
-          {/* ... all your other sections here ... */}
+          {/* 2. Project Information */}
+          <section className="project-section">
+            <h2>2. Project Information</h2>
+
+            <div className="field">
+              <label>Project Title / Idea</label>
+              <input
+                type="text"
+                name="projectTitle"
+                placeholder='E.g. "E-commerce Website for Pet Shop" or "Personal Portfolio Website"'
+                value={form.projectTitle}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="field">
+              <label>
+                Project Type <span className="req">*</span>
+              </label>
+              <select
+                name="projectType"
+                value={form.projectType}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select project type</option>
+                <option value="website-design">Website Design</option>
+                <option value="web-dev-frontend">Web Development (Frontend)</option>
+                <option value="web-dev-fullstack">Web Development (Full Stack)</option>
+                <option value="api-backend">API or Backend Setup</option>
+                <option value="landing-page">Landing Page</option>
+                <option value="business-site">Business Website</option>
+                <option value="other">Other (Custom Requirement)</option>
+              </select>
+            </div>
+          </section>
+
+          {/* 3. Description */}
+          <section className="project-section">
+            <h2>3. Description</h2>
+            <div className="field">
+              <label>
+                Describe your project or idea in a few lines{" "}
+                <span className="req">*</span>
+              </label>
+              <textarea
+                name="description"
+                rows="4"
+                placeholder="E.g. I want a responsive tourism website with booking options and image gallery."
+                value={form.description}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </section>
+
+          {/* 4. Budget Range */}
+          <section className="project-section">
+            <h2>4. Budget Range</h2>
+            <div className="field">
+              <label>What’s your approximate budget?</label>
+              <select
+                name="budget"
+                value={form.budget}
+                onChange={handleChange}
+              >
+                <option value="">Select budget range</option>
+                <option value="5k-10k">₹5,000 – ₹10,000</option>
+                <option value="10k-25k">₹10,000 – ₹25,000</option>
+                <option value="25k+">₹25,000+</option>
+              </select>
+            </div>
+          </section>
+
+          {/* 5. Deadline / Timeframe */}
+          <section className="project-section">
+            <h2>5. Deadline / Timeframe</h2>
+            <div className="field">
+              <label>When do you want your project to be completed?</label>
+              <select
+                name="timeframe"
+                value={form.timeframe}
+                onChange={handleChange}
+              >
+                <option value="">Select timeframe</option>
+                <option value="1-week">1 week</option>
+                <option value="2-4-weeks">2–4 weeks</option>
+                <option value="1-month+">1 month+</option>
+                <option value="not-sure">Not sure yet</option>
+              </select>
+            </div>
+          </section>
+
+          {/* 6. Reference (Optional) */}
+          <section className="project-section">
+            <h2>6. Reference (Optional)</h2>
+            <div className="field">
+              <label>Share any reference website or design you like</label>
+              <textarea
+                name="reference"
+                rows="2"
+                placeholder="E.g. https://example.com or Instagram profile link"
+                value={form.reference}
+                onChange={handleChange}
+              />
+            </div>
+          </section>
+
+          {/* 7. Preferred Contact Method */}
+          <section className="project-section">
+            <h2>7. Preferred Contact Method</h2>
+            <div className="field">
+              <label>How should I contact you?</label>
+              <div className="radio-row">
+                <label className="radio-pill">
+                  <input
+                    type="radio"
+                    name="contactMethod"
+                    value="email"
+                    checked={form.contactMethod === "email"}
+                    onChange={handleChange}
+                  />
+                  <span>Email</span>
+                </label>
+                <label className="radio-pill">
+                  <input
+                    type="radio"
+                    name="contactMethod"
+                    value="whatsapp"
+                    checked={form.contactMethod === "whatsapp"}
+                    onChange={handleChange}
+                  />
+                  <span>WhatsApp</span>
+                </label>
+                <label className="radio-pill">
+                  <input
+                    type="radio"
+                    name="contactMethod"
+                    value="phone"
+                    checked={form.contactMethod === "phone"}
+                    onChange={handleChange}
+                  />
+                  <span>Phone Call</span>
+                </label>
+              </div>
+            </div>
+          </section>
 
           {/* Status message */}
           {status && (
@@ -199,7 +342,7 @@ export default function ProjectRequest() {
             </p>
           )}
 
-          {/* Submit */}
+          {/* 8. Submit */}
           <div className="project-submitRow">
             <button
               type="submit"

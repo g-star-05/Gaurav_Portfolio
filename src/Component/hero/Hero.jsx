@@ -30,9 +30,14 @@ const Hero = () => {
             </Link>
 
             {/* You can later link this to a real resume URL */}
-            <a href="#resume" className="btn btn--ghost">
-              My resume
-            </a>
+            <a
+  href="/resume.pdf"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="btn btn--ghost"
+>
+  My resume
+</a>
           </div>
         </div>
 
